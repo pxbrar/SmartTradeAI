@@ -1,0 +1,2 @@
+# SmartTradeAI
+Final Project
