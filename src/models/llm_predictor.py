@@ -54,7 +54,7 @@ class LLMTradingPredictor:
     3. OpenAI - Free trial credits
     
     Usage:
-        predictor = LLMTradingPredictor(provider='gemini', api_key='AIzaSyD_1m8HSeWnFYjZz8BsXxHCtBqvUtAWs48')
+        predictor = LLMTradingPredictor(provider='gemini', api_key='')
         prediction = predictor.predict('NVDA', indicators, price_data)
     """
     
