@@ -1,0 +1,81 @@
+/* SmartTrade AI - Custom Dark Theme Styles */
+
+/* Dropdown styling for dark theme */
+.Select-control {
+    background-color: #1a1a1a !important;
+    border-color: #444 !important;
+}
+
+.Select-menu-outer {
+    background-color: #1a1a1a !important;
+    border-color: #444 !important;
+}
+
+.Select-option {
+    background-color: #1a1a1a !important;
+    color: white !important;
+}
+
+.Select-option:hover,
+.Select-option.is-focused {
+    background-color: #333 !important;
+}
+
+.Select-option.is-selected {
+    background-color: #0d6efd !important;
+}
+
+.Select-value-label {
+    color: white !important;
+}
+
+.Select-placeholder {
+    color: #888 !important;
+}
+
+.Select-input input {
+    color: white !important;
+}
+
+.Select-multi-value-wrapper .Select-value {
+    background-color: #333 !important;
+    border-color: #555 !important;
+    color: white !important;
+}
+
+.Select-value-icon {
+    border-right-color: #555 !important;
+}
+
+.Select-value-icon:hover {
+    background-color: #444 !important;
+    color: white !important;
+}
+
+/* VirtualizedSelect options */
+.VirtualizedSelectOption {
+    background-color: #1a1a1a !important;
+    color: white !important;
+}
+
+.VirtualizedSelectFocusedOption {
+    background-color: #333 !important;
+}
+
+/* Clear indicator */
+.Select-clear-zone {
+    color: #888 !important;
+}
+
+.Select-clear-zone:hover {
+    color: white !important;
+}
+
+/* Arrow indicator */
+.Select-arrow-zone {
+    color: #888 !important;
+}
+
+.Select-arrow {
+    border-color: #888 transparent transparent !important;
+}
