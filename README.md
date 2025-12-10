@@ -1,52 +1,216 @@
 # SmartTrade AI
 
-## Quick Start
+## Project Overview
 
-### 1. Clone and Setup
+SmartTrade-AI is an AI-powered stock analysis and trading signal platform. It features 8 ML model categories, real-time data fetching, sentiment analysis, and an interactive dashboard.
 
+---
+
+## Core Modules (`src/`)
+
+### data_collection.py
+Fetches stock data from Yahoo Finance using `yfinance`.
+- `StockDataCollector`: Main class for fetching OHLCV data
+- Supports multiple periods (1mo, 3mo, 1y, 5y, max)
+- Saves to CSV and loads into database
+
+### database.py
+SQLite database management for persistent storage.
+- `SmartTradeDB`: Database wrapper class
+- Tables: `prices`, `predictions`, `sentiment`, `backtests`
+- CRUD operations for all data types
+
+### indicators.py
+- Calculates technical indicators.
+- **Trend**: SMA (20, 50, 200), EMA
+- **Momentum**: RSI, MACD, Stochastic
+- **Volatility**: Bollinger Bands, ATR
+- **Volume**: OBV, Volume SMA
+- `calculate_all_indicators()`: Computes all at once
+
+### sentiment.py
+Analyzes news sentiment using TextBlob + keyword matching.
+- `SentimentAnalyzer`: Core sentiment engine
+- `RealTimeSentiment`: Fetches real headlines from Yahoo RSS, Finnhub, Alpha Vantage
+- Returns positive/negative/neutral classification with confidence scores
+
+### signals.py
+Generates trading signals from technical indicators.
+- `SignalGenerator`: Combines RSI, MACD, Bollinger signals
+- Returns BUY/SELL/HOLD with confidence score
+
+### backtesting.py
+Tests trading strategies on historical data.
+- `Backtester`: Simulates trades with configurable parameters
+- Metrics: total return, Sharpe ratio, max drawdown, win rate
+
+### api_integration.py
+Clients for external APIs.
+- `AlphaVantageClient`: Stock quotes and indicators
+- `NewsAPIClient`: News articles
+- `FREDClient`: Economic indicators (GDP, VIX, etc.)
+- `CryptoClient`: CoinGecko for crypto prices
+
+---
+
+## Dashboard (`dashboard/`)
+
+### app_premium.py (Main Dashboard)
+Full-featured dashboard with all 8 ML categories.
+
+**Features:**
+- Real-time price charts with candlesticks
+- Technical indicator overlays (SMA, BB, RSI, MACD)
+- AI trading signals with confidence
+- Sentiment analysis gauge
+- Price forecast visualization
+- ML model training across all 8 categories
+- LLM-powered predictions
+
+**Run:** `python dashboard/app_premium.py` → Open http://localhost:8051
+
+---
+
+## Entry Points
+
+### main.py
+CLI for fetching data and running models.
 ```bash
-git clone [repository-url]
-cd SmartTrade-AI
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Mac/Linux
-# .venv\Scripts\activate   # Windows
-
-# Install dependencies
-pip install -r requirements.txt
+python main.py  # Interactive menu
 ```
-### 2. Install Advanced Dependencies (Optional)
 
+### update_database.py
+Updates stock data in the SQLite database.
 ```bash
-# Ensemble methods
-pip install xgboost lightgbm
-
-# Deep learning
-pip install tensorflow
-# For Apple Silicon: pip install tensorflow-macos tensorflow-metal
-
-# LLM features
-pip install google-generativeai
-
-# Install Ollama for free local LLM
-brew install ollama
-ollama serve  # Start server
-ollama pull mistral  # Download model
-```
-### 3. Run the Dashboard
-
-```bash
-cd dashboard
-python app_premium.py
-# Open http://localhost:8051
+python update_database.py  # Refreshes all stock data
 ```
 
-### 4. Run the LLM Trading Demo
-
+### llm_trading_demo.py
+Standalone demo of LLM trading predictions.
 ```bash
 python llm_trading_demo.py
 ```
+
+---
+
+## Step-by-Step Setup Guide
+
+Follow these steps in order to run SmartTrade-AI. Each step explains **what** to do and **why** it's needed.
+
+---
+
+### Step 1: Install Python Dependencies
+
+```bash
+cd /Users/prabh/Downloads/SmartTrade-AI
+pip install -r requirements.txt
+```
+
+**Why:** Installs all required Python packages:
+- `yfinance` - Fetches stock data from Yahoo Finance
+- `pandas`, `numpy` - Data manipulation and numerical operations
+- `scikit-learn` - ML models (Random Forest, KNN, etc.)
+- `plotly`, `dash` - Interactive dashboard visualization
+- `textblob` - Sentiment analysis
+- `statsmodels` - ARIMA time series forecasting
+- `torch` - Deep learning (LSTM, CNN, Transformer)
+- `google-generativeai` - Gemini LLM integration (optional)
+
+---
+
+### Step 2: Configure API Keys (`.env` file)
+
+The `.env` file is already configured with API keys:
+
+```
+GEMINI_API_KEY=
+FINNHUB_API_KEY=
+ALPHA_VANTAGE_KEY=
+```
+
+**Why:** API keys enable real-time features:
+- `GEMINI_API_KEY` - Powers LLM predictions with natural language reasoning
+- `FINNHUB_API_KEY` - Fetches real news headlines for sentiment analysis
+- `ALPHA_VANTAGE_KEY` - Provides additional stock data and indicators
+
+Without these, the dashboard shows "Not configured" for sentiment/LLM features.
+
+---
+
+### Step 3: Populate the Database with Stock Data
+
+```bash
+python update_database.py
+```
+
+**Why:** Downloads historical stock data for stocks and stores it in SQLite database (`database/smarttrade.db`).
+
+**What happens:**
+1. Fetches 5 years of OHLCV data from Yahoo Finance
+2. Calculates all technical indicators (RSI, MACD, Bollinger Bands, etc.)
+3. Saves to SQLite for fast dashboard loading
+
+Without this step, the dashboard shows "No stocks in database".
+
+---
+
+### Step 4: Run the Dashboard
+
+```bash
+python dashboard/app_premium.py
+```
+
+**Why:** Starts the Plotly Dash web server on port 8051.
+
+**What happens:**
+1. Loads stock data from SQLite database
+2. Initializes all ML models
+3. Starts web server at http://localhost:8051
+
+---
+
+### Step 5: Open the Dashboard
+
+Open your browser and navigate to:
+
+```
+http://localhost:8051
+```
+
+**What you'll see:**
+1. Stock selector dropdown (top left)
+2. Price chart with candlesticks
+3. Technical indicators (RSI, MACD tabs)
+4. AI trading signal with confidence score
+5. Sentiment analysis gauge
+
+---
+
+### Step 6: Train ML Models
+
+1. Select a stock from the dropdown (e.g., AAPL)
+2. Click **"Train All Models"** button
+
+**Why:** Trains all ML model categories on the selected stock's data:
+
+Results appear in the tabs below the main chart.
+
+---
+
+### Step 7: Get LLM Predictions (Optional)
+
+1. Select a stock
+2. Click **"Get LLM Prediction"** button
+
+**Why:** Uses Google Gemini to analyze technical indicators and provide:
+- BUY/SELL/HOLD recommendation
+- Confidence score
+- Natural language reasoning
+- Risk assessment
+
+Requires `GEMINI_API_KEY` in `.env` file.
+
+---
 
 ## Features
 
@@ -69,14 +233,7 @@ python llm_trading_demo.py
 - **Momentum:** RSI, MACD, Stochastic Oscillator
 - **Volatility:** Bollinger Bands, ATR
 - **Volume:** OBV, Volume Ratio
-
-### Free LLM Providers
-
-| Provider | Rate Limit | API Key |
-|----------|------------|---------|
-| **Ollama** | Unlimited (local) | None needed |
-| **Gemini** | 15 RPM, 1M tokens/month | [Get Key](https://makersuite.google.com/app/apikey) |
-
+  
 ---
 
 ## 📁 Project Structure
